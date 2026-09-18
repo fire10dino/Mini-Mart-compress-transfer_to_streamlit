@@ -573,71 +573,59 @@ def send_order_email(
     total: int,
     notes: str,
 ) -> bool:
+    """Send an order email through FormSubmit."""
 
-    st.warning("DEBUG: send_order_email() was called")
-
-    # rest of your function...
-
-    formsubmit_email = st.secrets["formsubmit"]["email"]
+    formsubmit_token = "c8e3214f719936ffedbe8bb92367f2ab"
 
     form_data = {
-        "order_number": order_number,
+        "order_number": str(order_number),
         "username": username,
         "name": name,
-        "customer_email": email,
+        "email": email,
         "phone": phone,
         "items": items,
         "total": f"${total}",
         "notes": notes,
 
         "_subject": f"Mini Mart Order #{order_number}",
-        "_captcha": "false",
         "_template": "table",
     }
 
     try:
         response = requests.post(
-            f"https://formsubmit.co/{formsubmit_email}",
+            f"https://formsubmit.co/ajax/{formsubmit_token}",
             data=form_data,
-            timeout=15,
-            allow_redirects=True,
+            headers={
+                "Accept": "application/json",
+            },
+            timeout=20,
         )
 
-        if response.status_code >= 400:
+        try:
+            result = response.json()
+        except ValueError:
             st.error(
-                f"FormSubmit failed ({response.status_code}). "
-                f"Response: {response.text[:500]}"
+                f"FormSubmit returned an unexpected response "
+                f"(HTTP {response.status_code})."
             )
+            st.code(response.text[:2000])
             return False
 
-        return True
+        if response.status_code >= 400:
+            st.error(f"FormSubmit failed: HTTP {response.status_code}")
+            st.code(str(result))
+            return False
+
+        if result.get("success") is True:
+            return True
+
+        st.error("FormSubmit did not confirm the submission.")
+        st.code(str(result))
+        return False
 
     except requests.RequestException as exc:
         st.error(f"Could not connect to FormSubmit: {exc}")
         return False
-
-    payload = {
-        "_subject": "New Mini Mart Order",
-        "_template": "table",
-        "_captcha": "false",
-        "Order Number": order_number,
-        "Username": username,
-        "Customer Name": name,
-        "Customer Email": email,
-        "Phone": phone,
-        "Order Items": items,
-        "Total": f"${total}",
-        "Notes": notes,
-    }
-
-    response = requests.post(
-        f"https://formsubmit.co/{FORMSUBMIT_EMAIL}",
-        data=payload,
-        timeout=15,
-    )
-
-    response.raise_for_status()
-
 
 # ============================================================
 # CHECKOUT PROCESS
