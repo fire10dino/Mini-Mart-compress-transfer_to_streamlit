@@ -573,7 +573,10 @@ def send_order_email(
     total: int,
     notes: str,
 ) -> bool:
-    """Send the order through FormSubmit."""
+
+    st.warning("DEBUG: send_order_email() was called")
+
+    # rest of your function...
 
     formsubmit_email = st.secrets["formsubmit"]["email"]
 
