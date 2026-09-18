@@ -572,7 +572,46 @@ def send_order_email(
     items: str,
     total: int,
     notes: str,
-) -> None:
+) -> bool:
+    """Send the order through FormSubmit."""
+
+    formsubmit_email = st.secrets["formsubmit"]["email"]
+
+    form_data = {
+        "order_number": order_number,
+        "username": username,
+        "name": name,
+        "customer_email": email,
+        "phone": phone,
+        "items": items,
+        "total": f"${total}",
+        "notes": notes,
+
+        "_subject": f"Mini Mart Order #{order_number}",
+        "_captcha": "false",
+        "_template": "table",
+    }
+
+    try:
+        response = requests.post(
+            f"https://formsubmit.co/{formsubmit_email}",
+            data=form_data,
+            timeout=15,
+            allow_redirects=True,
+        )
+
+        if response.status_code >= 400:
+            st.error(
+                f"FormSubmit failed ({response.status_code}). "
+                f"Response: {response.text[:500]}"
+            )
+            return False
+
+        return True
+
+    except requests.RequestException as exc:
+        st.error(f"Could not connect to FormSubmit: {exc}")
+        return False
 
     payload = {
         "_subject": "New Mini Mart Order",
