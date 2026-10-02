@@ -852,10 +852,7 @@ def render_auth_page() -> None:
                     🏪 Mini Mart
                 </h1>
 
-                <p style="color:#666">
-                    Login or create an account
-                </p>
-            </div>
+    
             """,
             unsafe_allow_html=True,
         )
