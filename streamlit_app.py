@@ -203,31 +203,111 @@ except Exception as exc:
 
 PRODUCTS: Dict[str, List[Dict[str, Any]]] = {
     "cookies": [
-        {"id": "cookies-1", "name": "Lays Chips ~50g", "price": 40},
-        {"id": "cookies-2", "name": "Doritos ~50g", "price": 40},
-        {"id": "cookies-3", "name": "Pringles ~50g", "price": 40},
+        {
+            "id": "cookies-1",
+            "name": "Lays Chips ~50g",
+            "price": 40,
+            "image": "PASTE_LAYS_IMAGE_URL_HERE",
+        },
+        {
+            "id": "cookies-2",
+            "name": "Doritos ~50g",
+            "price": 40,
+            "image": "PASTE_DORITOS_IMAGE_URL_HERE",
+        },
+        {
+            "id": "cookies-3",
+            "name": "Pringles ~50g",
+            "price": 40,
+            "image": "PASTE_PRINGLES_IMAGE_URL_HERE",
+        },
     ],
+
     "snacks": [
-        {"id": "snacks-1", "name": "Airwaves", "price": 50},
-        {"id": "snacks-2", "name": "Hersheys", "price": 50},
+        {
+            "id": "snacks-1",
+            "name": "Airwaves",
+            "price": 50,
+            "image": "PASTE_AIRWAVES_IMAGE_URL_HERE",
+        },
+        {
+            "id": "snacks-2",
+            "name": "Hersheys",
+            "price": 50,
+            "image": "PASTE_HERSHEYS_IMAGE_URL_HERE",
+        },
     ],
+
     "drinks": [
-        {"id": "drinks-1", "name": "Coke ~350ml", "price": 50},
-        {"id": "drinks-2", "name": "Sprite ~350ml", "price": 50},
-        {"id": "drinks-3", "name": "Orange Juice ~200ml", "price": 50},
-        {"id": "drinks-4", "name": "Pepsi ~350ml", "price": 50},
+        {
+            "id": "drinks-1",
+            "name": "Coke ~350ml",
+            "price": 50,
+            "image": "PASTE_COKE_IMAGE_URL_HERE",
+        },
+        {
+            "id": "drinks-2",
+            "name": "Sprite ~350ml",
+            "price": 50,
+            "image": "PASTE_SPRITE_IMAGE_URL_HERE",
+        },
+        {
+            "id": "drinks-3",
+            "name": "Orange Juice ~200ml",
+            "price": 50,
+            "image": "PASTE_ORANGE_JUICE_IMAGE_URL_HERE",
+        },
+        {
+            "id": "drinks-4",
+            "name": "Pepsi ~350ml",
+            "price": 50,
+            "image": "PASTE_PEPSI_IMAGE_URL_HERE",
+        },
     ],
+
     "ramen": [
-        {"id": "ramen-1", "name": "Cup Noodles", "price": 60},
-        {"id": "ramen-2", "name": "Shin Ramen", "price": 70},
+        {
+            "id": "ramen-1",
+            "name": "Cup Noodles",
+            "price": 60,
+            "image": "PASTE_CUP_NOODLES_IMAGE_URL_HERE",
+        },
+        {
+            "id": "ramen-2",
+            "name": "Shin Ramen",
+            "price": 70,
+            "image": "PASTE_SHIN_RAMEN_IMAGE_URL_HERE",
+        },
     ],
+
     "donuts": [
-        {"id": "donuts-1", "name": "Glazed Donut", "price": 50},
-        {"id": "donuts-2", "name": "Chocolate Donut", "price": 50},
+        {
+            "id": "donuts-1",
+            "name": "Glazed Donut",
+            "price": 50,
+            "image": "PASTE_GLAZED_DONUT_IMAGE_URL_HERE",
+        },
+        {
+            "id": "donuts-2",
+            "name": "Chocolate Donut",
+            "price": 50,
+            "image": "PASTE_CHOCOLATE_DONUT_IMAGE_URL_HERE",
+        },
     ],
+
     "giftcards": [
-        {"id": "giftcard-1", "name": "Minecraft Gift Card", "price": 800},
-        {"id": "giftcard-2", "name": "Google Play Gift Card", "price": 500},
+        {
+            "id": "giftcard-1",
+            "name": "Minecraft Gift Card",
+            "price": 800,
+            "image": "PASTE_MINECRAFT_GIFT_CARD_IMAGE_URL_HERE",
+        },
+        {
+            "id": "giftcard-2",
+            "name": "Google Play Gift Card",
+            "price": 500,
+            "image": "PASTE_GOOGLE_PLAY_IMAGE_URL_HERE",
+        },
     ],
 }
 
