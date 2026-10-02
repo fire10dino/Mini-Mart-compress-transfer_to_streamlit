@@ -1,5 +1,7 @@
 import random
+import smtplib
 from datetime import datetime, timezone
+from email.mime.text import MIMEText
 from typing import Any, Dict, List, Optional
 
 import requests
@@ -147,11 +149,16 @@ except Exception:
     FIREBASE_DATABASE_URL = DEFAULT_FIREBASE_DATABASE_URL
 
 
-# FormSubmit email
+# ============================================================
+# GMAIL CONFIGURATION
+# ============================================================
+
 try:
-    FORMSUBMIT_EMAIL = st.secrets["formsubmit"]["email"]
+    GMAIL_SENDER = st.secrets["gmail"]["sender"]
+    GMAIL_APP_PASSWORD = st.secrets["gmail"]["app_password"]
 except Exception:
-    FORMSUBMIT_EMAIL = "clive.lin.dino@gmail.com"
+    GMAIL_SENDER = ""
+    GMAIL_APP_PASSWORD = ""
 
 
 # ============================================================
@@ -573,59 +580,69 @@ def send_order_email(
     total: int,
     notes: str,
 ) -> bool:
-    """Send an order email through FormSubmit."""
+    """Send an order email through Gmail SMTP."""
 
-    formsubmit_token = "c8e3214f719936ffedbe8bb92367f2ab"
+    if not GMAIL_SENDER or not GMAIL_APP_PASSWORD:
+        st.error(
+            "Gmail email settings are missing. "
+            "Please configure [gmail] in Streamlit Secrets."
+        )
+        return False
 
-    form_data = {
-        "order_number": str(order_number),
-        "username": username,
-        "name": name,
-        "email": email,
-        "phone": phone,
-        "items": items,
-        "total": f"${total}",
-        "notes": notes,
+    body = f"""New Mini Mart Order
 
-        "_subject": f"Mini Mart Order #{order_number}",
-        "_template": "table",
-    }
+Order Number: #{order_number}
+
+Username: {username}
+Customer Name: {name}
+Customer Email: {email}
+Phone: {phone}
+
+Items:
+{items}
+
+Total: ${total}
+
+Notes:
+{notes}
+"""
+
+    msg = MIMEText(body)
+
+    msg["From"] = GMAIL_SENDER
+    msg["To"] = GMAIL_SENDER
+    msg["Subject"] = f"Mini Mart Order #{order_number}"
 
     try:
-        response = requests.post(
-            f"https://formsubmit.co/ajax/{formsubmit_token}",
-            data=form_data,
-            headers={
-                "Accept": "application/json",
-            },
+        server = smtplib.SMTP(
+            "smtp.gmail.com",
+            587,
             timeout=20,
         )
 
-        try:
-            result = response.json()
-        except ValueError:
-            st.error(
-                f"FormSubmit returned an unexpected response "
-                f"(HTTP {response.status_code})."
-            )
-            st.code(response.text[:2000])
-            return False
+        server.starttls()
 
-        if response.status_code >= 400:
-            st.error(f"FormSubmit failed: HTTP {response.status_code}")
-            st.code(str(result))
-            return False
+        server.login(
+            GMAIL_SENDER,
+            GMAIL_APP_PASSWORD,
+        )
 
-        if result.get("success") is True:
-            return True
+        server.sendmail(
+            GMAIL_SENDER,
+            GMAIL_SENDER,
+            msg.as_string(),
+        )
 
-        st.error("FormSubmit did not confirm the submission.")
-        st.code(str(result))
+        server.quit()
+
+        return True
+
+    except Exception as exc:
+        st.error(
+            f"Could not send order email through Gmail: {exc}"
+        )
         return False
 
-    except requests.RequestException as exc:
-        st.error(f"Could not connect to FormSubmit: {exc}")
-        return False
 
 # ============================================================
 # CHECKOUT PROCESS
@@ -683,7 +700,7 @@ def complete_checkout(
         # ----------------------------------------------------
         # SEND EMAIL
         # ----------------------------------------------------
-        send_order_email(
+        email_sent = send_order_email(
             order_number,
             st.session_state.username,
             name,
@@ -693,6 +710,13 @@ def complete_checkout(
             total,
             notes,
         )
+
+        if not email_sent:
+            st.warning(
+                "The order was saved, but the confirmation "
+                "email could not be sent."
+            )
+            return
 
         # ----------------------------------------------------
         # CLEAR CART
